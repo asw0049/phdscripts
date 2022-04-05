@@ -1,8 +1,10 @@
 #!/bin/bash
 
-#This script will be used to analyze tempertaure data taken from animals housed in semi-natural enclosures.
+#This script will be used to analyze temperature data taken from animals housed in semi-natural enclosures. Note the script requires
+#a csv file and will generate a summary csv of average core body temperatures taken Sept 2019-July 2020. Several daily files will also
+#be generated. Those can be referenced if values generated are out of range or can be discarded to save space.
 #
-#
+#Below arrays were used to generate month variables consisting of dates to call daily scanned temperatures.
 ##########Make Sample List Array##
 declare -a sept=("9_1_2019" "9_2_2019" "9_3_2019" "9_4_2019" "9_5_2019" "9_6_2019" "9_7_2019" "9_8_2019" "9_9_2019" "9_10_2019" "9_11_2019" "9_12_2019" "9_13_2019" "9_14_2019" "9_15_2019" "9_16_2019" "9_17_2019" "9_18_2019" "9_19_2019" "9_20_2019" "9_21_2019" "9_22_2019" "9_23_2019" "9_24_2019" "9_25_2019" "9_26_2019" "9_27_2019" "9_28_2019" "9_29_2019" "9_30_2019" "9_31_2019")
 
@@ -44,7 +46,8 @@ input_file="$1"
 #
 # STEP 1: Intake csv file with temperatures.
 #
-# STEP 2: Parse temperature reads by ID number.
+# STEP 2: Parse temperature reads by ID number.This first half parses ids from the reproductive list. The second half parses ids associated
+# with animals who are non-reproductive.
 
 if test -f "$input_file"; then
 	for id in ${repro_list[@]}; do
