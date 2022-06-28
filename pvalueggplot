@@ -1,0 +1,19 @@
+#Add p-values to faceted ggplot in R Studio
+##Problem: stat_compare_means conflicts with ggplot2()'s fill() function in R studio when using facet_wrap. In addition, stat_compare_means stsistsicual tests do not allow for apprehnsion of higehr order p-values aobatined from datasets analyzed with glm() poission-dsiictiburions and the p-values generated from simple t-tests tend to conflict with p-values from an lm().
+##Purpose: To generate accuate plots with p-values affixed indicating pariwise comparisions. 
+
+##ethod: Adding p-Values Manually to plots in R.
+Dependencies: Tidyverse, ggpubr, ggplot2
+
+###Step One: Create the data frame listing the column names and values. Because ggpubr() statiscial tests are no capable of pulling p-values from higher order statistal tests like glm(Y~X, family=poisson, data=data), the results from each statistal test will need to be privided into data frame manually.
+
+stat.testAll<- tibble::tribble(~group1, ~group2,~Snp_Type, ~glmModelp, "Middle","Aged","Transversion","3.40e-05", "Middle", "NR","Transversion","3.22e-05", "Middle", "R","Transversion","<2e-16","R", "Aged","Transversion","1.54e-07", "R","NR","Transversion","5.09e-13","NR","Aged","Transversion","0.577","Middle","Aged","Transition","2.83e-14", "Middle", "NR", "Transition","1.32e-15", "Middle", "R","Transition", "1.54e-15","R","Aged","Transition","0.891", "R","NR","Transition","0.675","NR","Aged","Transition","0.607")
+
+###Step Two: Add a column from which ggplot can use to plot the p-value label onto the final plot using mutate(). The number provided indicate the poistion along the y-axis the labels will be placed. This provides the "stacked" effect. If there are 2 facets, ensure the values are duplicated.
+
+'''p1<-stat.testAll %>% mutate(y.position = rep(c(80, 87, 94, 101, 108, 115), 2))'''
+
+###Step Three: Use stat_pvalue_manual() to select the merged dataframe from which ggplot can pull the p-values.
+
+'''ggplot(snps_brain, aes(x=factor(c(Group),levels=c("NR","R","Middle","Aged")), y=SnpCount, fill=Snp_Type))+ geom_bar(stat="summary", position="dodge",fun="mean")+ labs(title="MtDNA Transitions and Transversions in the Mus Brain\n")+xlab("\nTreatment Group")+ ylab("Average SNP Count")+theme(plot.title = element_text(hjust = 0.5),panel.grid = element_blank(),panel.background = element_blank())+theme(plot.title = element_text(face="bold",size=14, hjust = 0.5),axis.title.y=element_text(size=10, angle=90, face="bold"))+theme_classic()+geom_errorbar(aes(x=Group, ymin=Mean, ymax=Mean+STD_group), width=.2, position=position_dodge(.9))+theme(plot.title = element_text(hjust = 0.5, face="bold"))+theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)))+scale_y_continuous(limits = c(0, 120),expand=c(0,0))+scale_fill_manual("SNP Type",values=c("Transition"="Khaki3","Transversion"="steelblue4"))+facet_wrap(~Snp_Type)+stat_pvalue_manual(p1, label = "glmModelp", tip.length = 0.01)'''
+
